@@ -1,16 +1,23 @@
 ﻿
 
-Console.WriteLine("Hello, World!");
 
-static float Number() => 33;
+
+Calculater calcul = Calculate;
+var valueRes = calcul(Substract, 10, 3);
+Console.WriteLine(valueRes);
+
 
 Func<float> func = Number;
+static float Number() => 33;
+
 
 static double Substract(double v1, double v2)
 {
     Console.WriteLine("Substract[{0} ; {1}]", v1, v2);
     return v1 - v2;
 }
+
+
 
 static double Calculate(Func<double, double, double> func, double v1, double v2)
 {
@@ -19,28 +26,29 @@ static double Calculate(Func<double, double, double> func, double v1, double v2)
     return value;
 }
 
-var res = Calculate(Substract, 10, 3);
-Console.WriteLine(res);
+
 
 
 
 
 // Action<Func<float>, bool, List<float>>
 
-
 Console.WriteLine();
-Action<Func<float>, bool, List<float>> action = (params1, params2, params3) =>
+
+
+
+Action<Func<float>, bool, List<float>> PrintChangedArrayIfTrue = (constValue, addValue, value) =>
 {
-    Console.WriteLine(params2);
-    Console.WriteLine("Массив :{0}", string.Join(";", params3));
-    if (params2 == true)
+    Console.WriteLine(addValue);
+    Console.WriteLine("Массив :{0}", string.Join(";", value));
+    if (addValue == true)
     {
-        params3 = params3.Select(x => x * params1.Invoke()).ToList();
-        Console.WriteLine("Массив :{0}", string.Join(";", params3));
+        value = value.Select(x => x * constValue.Invoke()).ToList();
+        Console.WriteLine("Массив :{0}", string.Join(";", value));
     }
 };
 
-action(Number, true, new List<float> { 1, 2, 3, 4, 5 });
+PrintChangedArrayIfTrue(Number, true, new List<float> { 1, 2, 3, 4, 5 });
 
 
 
@@ -53,20 +61,20 @@ action(Number, true, new List<float> { 1, 2, 3, 4, 5 });
 
 
 Console.WriteLine();
-static void ToChar(char t1) => Console.WriteLine(t1.ToString());
+static void PrintSymbol(char symbo) => Console.WriteLine(symbo);
 
-Func<Action<char>, bool, double, double> func1 = (params1, params2, params3) =>
+Func<Action<char>, bool, double, double> SumValue = (printChar, addValue, value) =>
 {
-    params1('F');
-    var value = (double)33.2;
-    if (params2 == true)
+    printChar('F');
+    var constValue = 33.2;
+    if (addValue == true)
     {
-        value += params3;
+        constValue += value;
     }
-    return value;
+    return constValue;
 };
 
-var valueFunc = func1(ToChar, true, 23);
+var valueFunc = SumValue(PrintSymbol, true, 23);
 Console.WriteLine(valueFunc);
 
 
@@ -74,9 +82,9 @@ Console.WriteLine(valueFunc);
 Console.WriteLine();
 //Func<Action<T>, float, float> : T object
 
-static void Activ(object T) => Console.WriteLine(T.ToString());
+static void PrintT(object T) => Console.WriteLine(T.ToString());
 
-static float FuncAction(Action<object> action, float value)
+static float SumOfValueAndParameterLength(Action<object> action, float value)
 {
     var str = "SAAADDDDD";
     action(value);
@@ -85,7 +93,7 @@ static float FuncAction(Action<object> action, float value)
     return value + str.Length;
 }
 
-var funcAction = FuncAction(Activ, 33);
+var funcAction = SumOfValueAndParameterLength(PrintT, 33);
 Console.WriteLine(funcAction);
 
 
@@ -96,51 +104,52 @@ Console.WriteLine(funcAction);
 Console.WriteLine();
 //Action<Func<int>, char, char>
 
-static int funcActiv() => -5;
+static int ConstValue() => -5;
 
-static void ActivThree(Func<int> t1, char t2, char t3)
+static void SymbolOutputDependingOnValue(Func<int> constValue, char firstSymbol, char secondSymbol)
 {
-    if (t1() <= 0)
-        Console.WriteLine(t2.ToString());
+    if (constValue() <= 0)
+        Console.WriteLine(firstSymbol.ToString());
     else
-        Console.WriteLine(t3.ToString());
+        Console.WriteLine(secondSymbol.ToString());
 }
 
-ActivThree(funcActiv, 'A', 'B');
+SymbolOutputDependingOnValue(ConstValue, 'A', 'B');
 
 
 //Action<Func<char, int>, List<string>>
 
 
-Func<char, int> function = (t) =>
+Func<char, int> ValueFromSymbol = (t) =>
 {
     if (char.IsDigit(t))
         return 1;
-    if (char.IsLetter(t))
+    else if (char.IsLetter(t))
         return -1;
     else
         return 0;
 };
 
-Action<Func<char, int>, List<string>> actionFunc = (params1, params2) =>
+Action<Func<char, int>, List<string>> ActionFunc = (value, line) =>
 {
-    var numberSymbol = params1('-');
+    var numberSymbol = value('-');
     var collection = new List<string>();
     if (numberSymbol == 1)
     {
-        params2.AddRange(new List<string>() { "Числооо", "Числоо", "Число" });
+        line.AddRange(new List<string>() { "Числооо", "Числоо", "Число" });
     }
     else if (numberSymbol == -1)
     {
-        params2.AddRange(new List<string>() { "Буквааа", "Букваа", "Буква" });
+        line.AddRange(new List<string>() { "Буквааа", "Букваа", "Буква" });
     }
     else
     {
-        params2.AddRange(new List<string>() { "Что-тооо", "Что-тоо", "Что-то" });
+        line.AddRange(new List<string>() { "Что-тооо", "Что-тоо", "Что-то" });
     }
-    Console.WriteLine("Массив :{0}", string.Join("; ", params2));
+    Console.WriteLine("Массив :{0}", string.Join("; ", line));
 };
 
-actionFunc(function, new List<string>() { "ХОООХ", "ХООХ", "ХОХ" });
+ActionFunc(ValueFromSymbol, new List<string>() { "ХОООХ", "ХООХ", "ХОХ" });
 
 
+delegate double Calculater(Func<double, double, double> func, double v1, double v2);
