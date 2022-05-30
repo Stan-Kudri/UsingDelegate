@@ -43,7 +43,8 @@ Action<Func<float>, bool, List<float>> PrintChangedArrayIfTrue = (constValue, ad
     Console.WriteLine("Массив :{0}", string.Join(";", value));
     if (addValue == true)
     {
-        value = value.Select(x => x * constValue.Invoke()).ToList();
+        var constant = constValue.Invoke();
+        value = value.Select(x => x * constant).ToList();
         Console.WriteLine("Массив :{0}", string.Join(";", value));
     }
 };
@@ -82,7 +83,7 @@ Console.WriteLine(valueFunc);
 Console.WriteLine();
 //Func<Action<T>, float, float> : T object
 
-static void PrintT(object T) => Console.WriteLine(T.ToString());
+static void Print(object T) => Console.WriteLine(T.ToString());
 
 static float SumOfValueAndParameterLength(Action<object> action, float value)
 {
@@ -93,7 +94,7 @@ static float SumOfValueAndParameterLength(Action<object> action, float value)
     return value + str.Length;
 }
 
-var funcAction = SumOfValueAndParameterLength(PrintT, 33);
+var funcAction = SumOfValueAndParameterLength(Print, 33);
 Console.WriteLine(funcAction);
 
 
